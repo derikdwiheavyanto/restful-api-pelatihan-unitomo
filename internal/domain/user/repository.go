@@ -12,12 +12,12 @@ var (
 		Insert             string
 		Select             string
 		SelectUserFakultas string
+		Update             string
 	}{
-		Insert: `INSERT INTO users (id,name,occupation,avatar_file_name, role,email,password_hash,created_at) 
-		VALUES (:id,:name,:occupation,:avatar_file_name,:role,:email,:password_hash,:created_at)`,
-
+		Insert:             `INSERT INTO users (id,name,occupation,avatar_file_name, role,email,password_hash,created_at) VALUES (:id,:name,:occupation,:avatar_file_name,:role,:email,:password_hash,:created_at)`,
 		Select:             `SELECT id, name, occupation, email, password_hash, avatar_file_name, role, created_at,updated_at FROM users`,
 		SelectUserFakultas: `SELECT u.id,u.name,u.email,f.name as fakultas FROM users u INNER JOIN fakultas f on u.id_fakultas = f.id;`,
+		Update:             `UPDATE users SET name = :name, occupation = :occupation, email = :email, password_hash = :password,updated_at = :updated_at  WHERE id = :id`,
 	}
 )
 
@@ -25,6 +25,7 @@ type Repository interface {
 	Save(User) (User, error)
 	GetAllData() ([]UserDto, error)
 	GetUsersFakultas() ([]UserFakultas, error)
+	Update(UpdateInput) (UpdateInput, error)
 }
 
 type repository struct {
@@ -96,4 +97,18 @@ func (r *repository) GetUsersFakultas() ([]UserFakultas, error) {
 
 	return dataUserFakultas, nil
 
+}
+
+func (r *repository) Update(input UpdateInput) (user UpdateInput, err error) {
+	stmt, err := r.db.PrepareNamed(userQuery.Update)
+	if err != nil {
+		return
+	}
+
+	_, err = stmt.Exec(input)
+	if err != nil {
+		return
+	}
+
+	return input, nil
 }

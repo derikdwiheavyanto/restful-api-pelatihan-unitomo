@@ -19,6 +19,7 @@ type Service interface {
 	RegisterUser(RegisterUserInput) (User, error)
 	GetAllData() ([]UserDto, error)
 	GetUsersFakultas() ([]UserFakultas, error)
+	Update(input UpdateInput) (UpdateInput, error)
 }
 
 func (s *service) RegisterUser(input RegisterUserInput) (User, error) {
@@ -50,4 +51,21 @@ func (s *service) GetAllData() (data []UserDto, err error) {
 
 func (s *service) GetUsersFakultas() ([]UserFakultas, error) {
 	return s.repository.GetUsersFakultas()
+}
+
+func (s *service) Update(input UpdateInput) (UpdateInput, error) {
+	hashPassword, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.MinCost)
+	if err != nil {
+		return UpdateInput{}, err
+	}
+
+	input.UpdatedAt = time.Now()
+	input.Password = string(hashPassword)
+	input, err = s.repository.Update(input)
+	if err != nil {
+		return UpdateInput{}, err
+	}
+
+	return input, nil
+
 }

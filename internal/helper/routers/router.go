@@ -28,6 +28,7 @@ func (r *Routers) ExecRouters(db *sqlx.DB) {
 
 	// users ROUTE
 	r.api.POST("/users", userHandler.RegisterUser)
+	r.api.PUT("/users", userHandler.Update)
 	r.api.GET("/users", userHandler.GetAllData)
 	r.api.GET("/users-fakultas", userHandler.GetUsersFakultas)
 

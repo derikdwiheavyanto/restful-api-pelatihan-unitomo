@@ -63,3 +63,21 @@ func (h *userHandler) GetUsersFakultas(c *gin.Context) {
 
 	helper.BindJsonWhenSuccess("Get Users Fakultas Success", "success", newUserFakultas, c)
 }
+
+func (h *userHandler) Update(c *gin.Context) {
+
+	var input user.UpdateInput
+	err := c.ShouldBindJSON(&input)
+	if err != nil {
+		helper.IFErr("Update Failed !", http.StatusUnprocessableEntity, "error", err.Error(), c)
+		return
+	}
+
+	newUser, err := h.userService.Update(input)
+	if err != nil {
+		helper.IFErr("Update Failed !", http.StatusUnprocessableEntity, "error", err.Error(), c)
+		return
+	}
+
+	helper.BindJsonWhenSuccess("Update Users Success", "Success", newUser, c)
+}
