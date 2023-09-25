@@ -121,14 +121,12 @@ func (r *repository) Update(fakultas Fakultas) (data Fakultas, err error) {
 		return
 	}
 
-	result, err := stmt.Exec(fakultas)
+	_, err = stmt.Exec(fakultas)
 
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-
-	fmt.Println(result.RowsAffected())
 
 	return fakultas, nil
 }

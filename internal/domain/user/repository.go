@@ -47,9 +47,6 @@ func (r *repository) Save(user User) (newUser User, err error) {
 		fmt.Println(err)
 		return user, err
 	}
-	if err != nil {
-		return user, err
-	}
 	return user, nil
 }
 

@@ -23,6 +23,7 @@ func main() {
 
 	//TODO define routes
 	api := router.Group("/api/v1")
+	
 	route := routers.RoutersInit(api)
 	route.ExecRouters(db)
 
