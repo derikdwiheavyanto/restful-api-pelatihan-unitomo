@@ -3,6 +3,8 @@ package routers
 import (
 	"api/internal/domain/dosen"
 	"api/internal/domain/fakultas"
+	"api/internal/domain/matakuliah"
+	"api/internal/domain/mengajar"
 	"api/internal/domain/user"
 	"api/internal/handler"
 
@@ -31,6 +33,14 @@ func (r *Routers) ExecRouters(db *sqlx.DB) {
 	dosenService := dosen.Newservice(dosenRepository)
 	dosenHandler := handler.NewDosenHandler(dosenService)
 
+	matakuliahRepository := matakuliah.NewRepository(db)
+	matakuliahService := matakuliah.Newservice(matakuliahRepository)
+	matakuliahHandler := handler.NewMatakuliahHandler(matakuliahService)
+
+	mengajarRepository := mengajar.NewRepository(db)
+	mengajarService := mengajar.Newservice(mengajarRepository)
+	mengajarHandler := handler.NewMengajarHandler(mengajarService)
+
 	// users ROUTE
 	r.api.POST("/users", userHandler.RegisterUser)
 	r.api.PUT("/users", userHandler.Update)
@@ -51,5 +61,17 @@ func (r *Routers) ExecRouters(db *sqlx.DB) {
 	r.api.GET("/dosen", dosenHandler.GetAllData)
 	r.api.GET("/dosen/:id", dosenHandler.GetDataById)
 	r.api.DELETE("/dosen/:id", dosenHandler.Delete)
+
+	// matakuliah ROUTE
+	r.api.POST("/matakuliah", matakuliahHandler.Create)
+	r.api.PUT("/matakuliah", matakuliahHandler.Update)
+	r.api.GET("/matakuliah", matakuliahHandler.GetAllData)
+	r.api.DELETE("/matakuliah/:kode_mk", matakuliahHandler.Delete)
+
+	// mengajar ROUTE
+	r.api.POST("/mengajar", mengajarHandler.Create)
+	r.api.PUT("/mengajar", mengajarHandler.Update)
+	r.api.GET("/mengajar", mengajarHandler.GetAllData)
+	r.api.DELETE("/mengajar/:id_dosen/:kode_mk", mengajarHandler.Delete)
 
 }
