@@ -23,10 +23,11 @@ type CheckEmailInput struct {
 }
 
 type UpdateInput struct {
-	ID         uuid.UUID `json:"id" db:"id" binding:"required"`
-	Name       string    `json:"name" db:"name" binding:"required"`
-	Occupation string    `json:"occupation" db:"occupation" binding:"required"`
-	Email      string    `json:"email" db:"email" binding:"required"`
-	Password   string    `json:"password" db:"password" binding:"required"`
-	UpdatedAt  time.Time `json:"updated_at" db:"updated_at"`
+	ID             uuid.UUID `json:"id" db:"id" binding:"required"`
+	Name           string    `json:"name" db:"name" binding:"required"`
+	Occupation     string    `json:"occupation" db:"occupation" binding:"required"`
+	Email          string    `json:"email" db:"email" binding:"required"`
+	Password       string    `json:"password" db:"password" binding:"required"`
+	AvatarFileName *string   `json:"avatarFileName" db:"avatar_file_name" binding:"required"`
+	UpdatedAt      time.Time `json:"updated_at" db:"updated_at"`
 }

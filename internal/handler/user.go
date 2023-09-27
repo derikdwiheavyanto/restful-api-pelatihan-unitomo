@@ -5,8 +5,10 @@ import (
 	"api/internal/helper"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gofrs/uuid"
 )
 
 type userHandler struct {
@@ -80,4 +82,53 @@ func (h *userHandler) Update(c *gin.Context) {
 	}
 
 	helper.BindJsonWhenSuccess("Update Users Success", "Success", newUser, c)
+}
+
+func (h *userHandler) UploadAvatar(c *gin.Context) {
+
+	form, err := c.MultipartForm()
+	files := form.File["avatar"]
+	id := form.Value["id"]
+	fmt.Println("id: ", id[0])
+	userID := uuid.FromStringOrNil(id[0])
+	if err != nil {
+		// data := gin.H{"is_uploaded": false}
+		helper.IFErr("Upload Avatar Failed", http.StatusUnprocessableEntity, "error", err.Error(), c)
+		return
+	}
+
+	file := files[0]
+
+	t := time.Now()
+	timeFormat := t.Format("20060102150405")
+	path := "images/" + timeFormat + "-" + file.Filename
+	err = c.SaveUploadedFile(file, path)
+	if err != nil {
+		// data := gin.H{"is_uploaded": false}
+		helper.IFErr("Upload Avatar Failed", http.StatusUnprocessableEntity, "error", err.Error(), c)
+		return
+	}
+
+	_, err = h.userService.SaveAvatar(userID, path)
+	if err != nil {
+		// data := gin.H{"is_uploaded": false}
+		helper.IFErr("Upload Avatar Failed", http.StatusUnprocessableEntity, "error", err.Error(), c)
+		return
+	}
+	data := gin.H{"is_uploaded": true}
+	helper.BindJsonWhenSuccess("Upload Avatar Success", "success", data, c)
+}
+
+func (h *userHandler) Delete(c *gin.Context) {
+	id, err := uuid.FromString(c.Param("id"))
+	if err != nil {
+		helper.IFErr("Delete User Failed", http.StatusBadRequest, "error", err.Error(), c)
+		return
+	}
+	err = h.userService.Delete(id)
+	if err != nil {
+		helper.IFErr("Delete User Failed", http.StatusBadRequest, "erorr", err.Error(), c)
+		return
+	}
+	helper.BindJsonWhenSuccess("Delete User Success", "success", "Delete Data Success", c)
 }

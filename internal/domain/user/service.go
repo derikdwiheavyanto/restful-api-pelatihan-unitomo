@@ -20,6 +20,8 @@ type Service interface {
 	GetAllData() ([]UserDto, error)
 	GetUsersFakultas() ([]UserFakultas, error)
 	Update(input UpdateInput) (UpdateInput, error)
+	SaveAvatar(id uuid.UUID, safeLocation string) (UpdateInput, error)
+	Delete(id uuid.UUID) error
 }
 
 func (s *service) RegisterUser(input RegisterUserInput) (User, error) {
@@ -68,4 +70,33 @@ func (s *service) Update(input UpdateInput) (UpdateInput, error) {
 
 	return input, nil
 
+}
+
+func (s *service) SaveAvatar(id uuid.UUID, fileLocation string) (UpdateInput, error) {
+	user, err := s.repository.GetDataById(id)
+	if err != nil {
+		return UpdateInput{}, err
+	}
+
+	updateInput := UpdateInput{}
+	updateInput.ID = user.ID
+	updateInput.Name = *user.Name
+	updateInput.Occupation = *user.AvatarFileName
+	updateInput.Email = *user.Email
+	updateInput.UpdatedAt = user.UpdatedAt
+	updateInput.AvatarFileName = &fileLocation
+
+	updatedUser, err := s.repository.Update(updateInput)
+	if err != nil {
+		return updatedUser, err
+	}
+	return updatedUser, nil
+}
+
+func (s *service) Delete(id uuid.UUID) error {
+	_, err := s.repository.GetDataById(id)
+	if err != nil {
+		return err
+	}
+	return s.repository.Delete(id)
 }

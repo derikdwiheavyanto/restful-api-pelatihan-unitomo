@@ -46,6 +46,8 @@ func (r *Routers) ExecRouters(db *sqlx.DB) {
 	r.api.PUT("/users", userHandler.Update)
 	r.api.GET("/users", userHandler.GetAllData)
 	r.api.GET("/users-fakultas", userHandler.GetUsersFakultas)
+	r.api.POST("/upload-avatar", userHandler.UploadAvatar)
+	r.api.DELETE("/user/:id", userHandler.Delete)
 
 	// fakultas ROUTE
 	r.api.POST("/fakultas", fakultasHandler.CreateFakultas)
