@@ -104,7 +104,7 @@ func (h *userHandler) UploadAvatar(c *gin.Context) {
 	path := "images/" + timeFormat + "-" + file.Filename
 	err = c.SaveUploadedFile(file, path)
 	if err != nil {
-		// data := gin.H{"is_uploaded": false}
+		data := gin.H{"is_uploaded": false}
 		helper.IFErr("Upload Avatar Failed", http.StatusUnprocessableEntity, "error", err.Error(), c)
 		return
 	}
